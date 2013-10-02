@@ -9,7 +9,7 @@ my $help=<<USAGE;
 For project os_sb, in chr Rice goes firest than Sorghum.
 Rice is Y and Sorghum is X.
 
-Example ob_os4dotplot:
+Example ob_os4dotplot: reference is Os
 ## Alignment 0: score=58088.0 e_value=0 N=1197 Ob01&Os01 plus
 01      OBR_GLEAN_10017347      15982593        15986184        01      Os01t0565600-03 23254441        23257194         1e-170
 01      OBR_GLEAN_10017348      15991732        15993455        01      Os01t0565800-00 23259578        23261341              0
@@ -33,20 +33,21 @@ Example ob_os4dotplot:
 
 
  
-Example rice2Sorghum.chr:
-Rice    Length  Sorghum Length
-chr01   43596771        chr03   74441160
-chr02   35925388        chr04   68034345
-chr03   36345490        chr01   73840631
-chr04   35244269        chr06   62208784
-chr05   29874162        chr09   59635592
-chr06   31246789        chr10   60981646
-chr07   29688601        chr02   77932606
-chr08   28309179        chr07   64342021
-chr09   23011239        chr02   77932606
-chr11   28462103        chr05   62352331
-chr10   22876596        chr01   73840631
-chr12   27497214        chr08   55460251
+Example ob_os.chr: reference is Os
+Ob	Length	Os	Length
+chr01	33916305	chr01	45038604
+chr02	27085147	chr02	36792247
+chr03	29536849	chr03	37312367
+chr04	21479432	chr04	36060865
+chr05	20170002	chr05	30073438
+chr06	21537212	chr06	32124789
+chr07	18473044	chr07	30357780
+chr08	18639272	chr08	28530027
+chr09	13736722	chr09	23895721
+chr10	14035047	chr10	23703430
+chr11	15914883	chr11	31219694
+chr12	14847084	chr12	27679166
+
 
 Run: perl boxplot.pl os_sb > log &
 USAGE
@@ -113,8 +114,8 @@ while (<CHR>){
          
 }
 close CHR;
-our $osratio=$yheight/$oslength;
-our $sbratio=$xlength/$sblength;
+our $osratio=$yheight/$oslength; ## qry, not os as it seems
+our $sbratio=$xlength/$sblength; ## ref, not sb as it seems
 
 #print "OS\t$osratio\nSB\t$sbratio\n";
 ###read in chrinfor and store infro in hash and scalar
@@ -223,6 +224,23 @@ while(<DOT>){
            foreach(@unit){
                  unless($_=~/\w+/){next};
                  my @para=split("\t",$_);
+      
+                 my ($color,$x1, $x2, $y1, $y2);
+                 if ($para[2] < $para[3]){
+                     $color = '#DAA520';
+                 }else{
+                     $color = 'blue';
+                 }
+                 $y1 = $para[2] * $osratio + $osstart[$para[0]-1];
+                 $y2 = $para[3] * $osratio + $osstart[$para[0]-1];               
+                 $x1 = $para[6] * $sbratio + $sbstart[$para[4]-1];
+                 $x2 = $para[7] * $sbratio + $sbstart[$para[4]-1];
+                 my $line =$svg->line(
+                         x1=>$x1,  y1=>$y1,
+                         x2=>$x2,  y2=>$y2,
+                         style=>{stroke=>$color,'stroke-width'=>0.4}
+                 );
+=pod
                  my $dotx;
                  if ($para[6]>$para[7]){
                      $dotx=$sbratio*(($para[6]-$para[7])/2+$para[7]);
@@ -238,8 +256,9 @@ while(<DOT>){
                  $dotx+=$sbstart[$para[4]-1];
                  $doty+=$osstart[$para[0]-1];
                  my $dot=$svg->circle(cx=>$dotx,cy=>$doty,r=>0.2,'fill'=>'#DAA520');
+=cut
            }
-
+=pod
      }elsif($sub1=~/$spec1/i){
           
           foreach(@unit){
@@ -292,6 +311,7 @@ while(<DOT>){
                  
                  my $dot=$svg->circle(cx=>$dotx,cy=>$doty,r=>0.2,'fill'=>'red');
           }
+=cut
      } 
 
 
