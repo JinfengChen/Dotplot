@@ -226,7 +226,7 @@ while(<DOT>){
                  my @para=split("\t",$_);
       
                  my ($color,$x1, $x2, $y1, $y2);
-                 if ($para[2] < $para[3]){
+                 if ($para[6] < $para[7]){
                      $color = '#DAA520';
                  }else{
                      $color = 'blue';

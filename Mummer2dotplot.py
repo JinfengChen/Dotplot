@@ -66,17 +66,17 @@ def mummer2dotplot_single(mummer):
                 qrye   = int(unit[0]) + int(unit[2])
                 refn   = 'Os_' + str(rank)
                 refs   = int(unit[1])
-                refe   = int(unit[1]) + int(unit[2])
+                refe   = int(unit[1]) - int(unit[2]) if (int(rev) == 1) else int(unit[1]) + int(unit[2])
                 output = []
                 if (int(rev) == 1):
-                    output = [chro, qryn, qrye, qrys, chro, refn, refs, refe, '1']
+                    output = [chro, qryn, qrys, qrye, chro, refn, refs, refe, '1']
                 else: 
                     output = [chro, qryn, qrys, qrye, chro, refn, refs, refe, '1']
                 print '\t'.join(map(str,output))
                 #print chro, qryn, qrys, qrye, chro, refn, refs, refe, '1'
                 rank   += 1
                 
-def mummer2dotplot_multi(mummer, dotplot):
+def mummer2dotplot_multi(mummer):
     s  = re.compile(r'^> (.*)$')
     s1 = re.compile(r'(\d+)')
     s2 = re.compile(r'Reverse')
@@ -110,9 +110,9 @@ def mummer2dotplot_multi(mummer, dotplot):
                 qrye   = int(unit[1]) + int(unit[3])
                 refn   = 'Os_' + str(rank)
                 refs   = int(unit[2])
-                refe   = int(unit[2]) + int(unit[3]) 
+                refe   = int(unit[2]) - int(unit[3]) if (int(rev) == 1) else int(unit[2]) + int(unit[3])
                 if (int(rev) == 1):
-                    output = [chro1, qryn, qrye, qrys, chro, refn, refs, refe, '1']
+                    output = [chro1, qryn, qrys, qrye, chro, refn, refs, refe, '1']
                 else:
                     output = [chro1, qryn, qrys, qrye, chro, refn, refs, refe, '1']
                 print '\t'.join(map(str,output))
@@ -133,12 +133,12 @@ def main():
     except:
         usage()
         sys.exit(2)
-    if (args.single == 1):
-        print 'Single comparision'
-        mummer2dotplot_single(args.input, args.output)
+    if (args.single == '1'):
+        #print 'Single comparision'
+        mummer2dotplot_single(args.input)
     else:
-        print 'Multi comparision'
-        mummer2dotplot_multi(args.input, args.output)
+        #print 'Multi comparision'
+        mummer2dotplot_multi(args.input)
     
 
 if __name__ == '__main__':
